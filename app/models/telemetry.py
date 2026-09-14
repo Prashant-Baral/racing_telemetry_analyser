@@ -11,7 +11,7 @@ class Telemetry(Base):
 	lap = Column(Integer , nullable = False)
 	timestamp = Column(String, nullable = False)
 	speed = Column(Float)
-	throtte = Column(Float)
+	throttle = Column(Float)
 	brake = Column(Float)
 	rpm = Column(Float)
 	gear = Column(Float)

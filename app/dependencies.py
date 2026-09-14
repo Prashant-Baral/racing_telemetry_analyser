@@ -6,16 +6,26 @@ from app.database import get_db
 from app.models.user import User
 from app.security import decode_access_token
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 
 def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)) -> User:
+    credentials_exception = HTTPException(
+        status_code=401,
+        detail="Could not validate credentials",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+
     try:
         payload = decode_access_token(token)
-        user_id = payload.get("sub")
-    except JWTError:
-        raise HTTPException(status_code=401, detail="Invalid token")
+        user_id: str = payload.get("sub")
+        if user_id is None:
+            raise credentials_exception
+        user_id_int = int(user_id)
+    except (JWTError, ValueError):
+        raise credentials_exception
 
-    user = db.query(User).filter(User.id == int(user_id)).first()
-    if not user:
-        raise HTTPException(status_code=401, detail="User not found")
+    user = db.query(User).filter(User.id == user_id_int).first()
+    if user is None:
+        raise credentials_exception
+
     return user
