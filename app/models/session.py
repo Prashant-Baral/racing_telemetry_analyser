@@ -1,4 +1,4 @@
-from sqlalchemy import Column , Integer , String , DateTime ,func,ForeignKey
+from sqlalchemy import Column , Integer , String , DateTime ,func,ForeignKey,Float
 from sqlalchemy.orm import relationship 
 
 from app.database import Base
@@ -11,6 +11,7 @@ class Session(Base):
 	driver = Column(String , nullable = False )
 	track = Column(String , nullable = False)
 	session_type = Column(String, nullable = False )
+	consistency_score = Column(Float, nullable=True)
 	created_at = Column(DateTime , server_default = func.now())
 
 	telemetry = relationship("Telemetry"  , back_populates = "session")

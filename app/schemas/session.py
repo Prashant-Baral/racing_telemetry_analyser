@@ -15,6 +15,6 @@ class SessionOut(BaseModel):
 	session_type : str
 	created_at : datetime
 
-	class config:
+	class Config:
 		from_attributes = True
 

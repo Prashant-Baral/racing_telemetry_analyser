@@ -6,6 +6,7 @@ from app.models.telemetry import Telemetry
 from app.dependencies import get_current_user
 from app.models.user import User
 from app.models.session import Session as SessionModel
+from app.workers.tasks import analyze_session_task
 
 router = APIRouter(prefix = "/telemetry", tags =["telemetry"])
 
@@ -51,4 +52,6 @@ async def upload_telemetry(session_id : int , file: UploadFile  = File(...),db :
     db.bulk_save_objects(records)
     db.commit()
 
-    return {"status": "ingested", "rows": len(records)}
+    job = analyze_session_task.delay(session_id)
+    return {"status": "processing", "rows": len(records), "job_id": job.id}
+
