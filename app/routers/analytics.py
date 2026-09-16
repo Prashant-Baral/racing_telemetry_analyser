@@ -63,6 +63,7 @@ def get_summary(session_id: int, db: DBSession = Depends(get_db), user: User = D
         "average_lap": round(sum(lap_times) / len(lap_times), 2),
         "top_speed": round(max(l.max_speed for l in laps), 2),
         "average_speed": round(sum(l.avg_speed for l in laps) / len(laps), 2),
+	"consistency_score": session.consistency_score,
     }
 
 
